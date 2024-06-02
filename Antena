@@ -1,0 +1,41 @@
+#include <ESP8266WiFi.h>
+#include <DHT.h>
+
+#define DHTPIN 2
+#define DHTTYPE DHT22
+#define WIFI_SSID "your_ssid"
+#define WIFI_PASSWORD "your_password"
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("WiFi connected");
+}
+
+void loop() {
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.print(" *C ");
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" %");
+
+  // Код для отправки данных в облако или на сервер
+
+  delay(60000); // Отправка данных каждые 60 секунд
+}
